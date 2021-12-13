@@ -1,0 +1,29 @@
+QMainWindow {
+    background-color: rgb(53, 53, 53);
+}
+
+QPushButton {
+    background-color: #555555;
+    border-radius: 5px;
+    border-style: none
+}
+QPushButton:enabled {
+    color: #ffffff;
+}
+QPushButton:disabled {
+    color: rgb(68, 68, 68)
+}
+QPushButton:hover {
+    background-color: #7e7e7e;
+}
+
+QLabel#folder_selected_label {
+    color: rgb(255, 255, 255)
+}
+QLabel#general_info_label {
+    color: rgb(255, 255, 255)
+}
+QLabel#stats_info_label {
+    color: rgb(255, 255, 255)
+}
+

@@ -1,0 +1,2 @@
+# OtakuDownloader
+ Manga scans downloader
