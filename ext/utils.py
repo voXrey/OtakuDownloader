@@ -1,4 +1,5 @@
 import json
+import os
 
 
 def open_json(path:str):
@@ -31,3 +32,16 @@ def dump_json(path:str, data:dict):
             return True
     except:
         return False
+
+def create_folder(folder_name:str):
+    """
+    Create a folder if not exists\n
+    Args :\n
+        `folder_name` (str) : the name of the folder\n
+    Return :\n
+        `None`\n
+    """
+    try:
+        os.mkdir(folder_name) 
+    except: 
+        pass

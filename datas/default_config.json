@@ -1,0 +1,15 @@
+{
+    "data": {
+        "current-scan-link": null,
+        "scans-folder": null,
+        "current-scan-chapters": [
+        ],
+        "current-scan-name": null
+    },
+    "stats" : {
+        "chapters-downloaded" : null,
+        "images-downloaded" : null,
+        "begining-timestamp" : null,
+        "ending-timestamp" : null
+    }
+}

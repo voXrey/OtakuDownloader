@@ -1,0 +1,18 @@
+{
+    "data": {
+        "current-scan-link": "https://mangascan.cc/manga/solo-leveling",
+        "scans-folder": "C:/Users/arthu/Desktop/scan test",
+        "current-scan-chapters": [
+            "https://mangascan.cc/manga/solo-leveling/59",
+            "https://mangascan.cc/manga/solo-leveling/60",
+            "https://mangascan.cc/manga/solo-leveling/61"
+        ],
+        "current-scan-name": "Solo Leveling"
+    },
+    "stats": {
+        "chapters-downloaded": null,
+        "images-downloaded": null,
+        "begining-timestamp": null,
+        "ending-timestamp": null
+    }
+}
