@@ -1,10 +1,10 @@
-import sys, time
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from ext.utils import create_folder, dump_json
-import os
+import time
+
 import requests
+from ext.utils import create_folder, dump_json
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 
 class LoopThread(QThread):
@@ -52,12 +52,12 @@ class DownloadScanInComboboxThread(QThread):
         ### GET IMAGES LINKS AND HER PATH ###
         chapters_links = self.programe.config['data']['current-scan-chapters']
         images_links = []
-        self.programe.GUI.top_right_label.print('Scrapping images links, please wait...')
+        self.programe.GUI.right_labels.top_label.print('Scrapping images links, please wait...')
         for chapter_link in chapters_links:
             while self.pause:
                 time.sleep(0.1)
             if not self.alive:
-                self.programe.GUI.top_right_label.print('Operation stoped!')
+                self.programe.GUI.right_labels.top_label.print('Operation stoped!')
                 return
                 
             images = []
@@ -67,7 +67,7 @@ class DownloadScanInComboboxThread(QThread):
                 while self.pause:
                     time.sleep(0.1)
                 if not self.alive:
-                    self.programe.GUI.top_right_label.print('Operation stoped!')
+                    self.programe.GUI.right_labels.top_label.print('Operation stoped!')
                     return
                     
                 folder_path = f"{scan_folder}/{scan_name}/{img_results['chapter-name']}"
@@ -79,7 +79,7 @@ class DownloadScanInComboboxThread(QThread):
                 'chapter-folder': folder_path,
                 'images':images
             })
-        self.programe.GUI.top_right_label.print('Images links scrapped! Downloading images...')
+        self.programe.GUI.right_labels.top_label.print('Images links scrapped! Downloading images...')
 
         ### DOWNLOAD IMAGES ###
         chapter_count = len(chapters_links)
@@ -90,7 +90,7 @@ class DownloadScanInComboboxThread(QThread):
             while self.pause:
                 time.sleep(0.1)
             if not self.alive:
-                self.programe.GUI.top_right_label.print('Operation stoped!')
+                self.programe.GUI.right_labels.top_label.print('Operation stoped!')
                 return
                 
             dict = images_links[0]
@@ -98,7 +98,7 @@ class DownloadScanInComboboxThread(QThread):
                 while self.pause:
                     time.sleep(0.1)
                 if not self.alive:
-                    self.programe.GUI.top_right_label.print('Operation stoped!')
+                    self.programe.GUI.right_labels.top_label.print('Operation stoped!')
                     return
                     
                 image = dict['images'][0]
@@ -116,7 +116,7 @@ class DownloadScanInComboboxThread(QThread):
                 del dict['images'][0]
             del images_links[0]
             i+=1
-            self.programe.GUI.top_right_label.print(f'Chapter {dict["chapter-number"]} download ({i}/{chapter_count})')
-        self.programe.GUI.top_right_label.print(f'{scan_name} was downloaded!')
+            self.programe.GUI.right_labels.top_label.print(f'Chapter {dict["chapter-number"]} download ({i}/{chapter_count})')
+        self.programe.GUI.right_labels.top_label.print(f'{scan_name} was downloaded!')
 
         self.alive = False

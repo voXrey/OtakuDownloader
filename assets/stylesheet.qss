@@ -1,13 +1,18 @@
 QMainWindow {
     background-color: rgb(53, 53, 53);
+    color: rgb(255, 255, 255)
 }
 
 
 QPushButton
 {
     background-color: #555555;
-    border-radius: 5px;
-    border-style: none
+    border-radius: 4px;
+    border-style: solid;
+    min-height: 30px;
+    max-height: 30px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
 }
 QPushButton:hover
 {
@@ -19,16 +24,86 @@ QPushButton:enabled
 }
 QPushButton:disabled
 {
-    color: rgb(68, 68, 68)
+    color: rgb(104, 104, 104)
 }
 
 
-QLabel#folder_label {
-    color: rgb(255, 255, 255)
-}
-
-QLabel#top_right_label, QLabel#bottom_right_label
+QLabel
 {
-    background-color : #202020;
-    color : rgb(255, 255, 255)
+    color: rgb(255, 255, 255);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+}
+QLabel#top_label, QLabel#bottom_label
+{
+    background-color : #404040;
+    border-style: solid;
+    border-width: 3px;
+    border-color: black;
+    color : rgb(255, 255, 255);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    min-width: 300px;
+}
+#compression_label,
+#size_label,
+#colors_label
+{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+
+}
+
+
+#scan_selector_combobox
+{
+    min-height: 30px;
+}
+
+#compression_combobox,
+#size_combobox,
+#colors_combobox
+{
+    min-height: 25px;
+}
+
+
+
+QTabWidget::pane
+{
+    border-color: black;
+    border-style: solid;
+    border-width: 3px;
+}
+QTabBar::tab
+{
+    background-color: #202020;
+    color: white;
+    border-color: black;
+    border-style: solid;
+    border-width: 3px;
+    border-bottom-width: 0px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    min-height: 25px;
+    min-width: 80px;
+}
+#options
+{
+    color:white;
+    background-color: #202020;
+}
+#futur_chapters_checkbox,
+#select_all_chapters_checkbox
+{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+}
+
+
+QCheckBox#select_all_chapters_checkbox, QCheckBox#futur_chapters_checkbox
+{
+    color:#ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
 }
