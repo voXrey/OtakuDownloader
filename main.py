@@ -1,14 +1,12 @@
 import sys
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication
-from ext.utils import dump_json, open_json
-import sys
-import time
 
 from classes.downloader import Downloader
 from classes.gui import GUI
-from classes.threads import LoopThread, DownloadScanInComboboxThread
+from classes.threads import DownloadScanInComboboxThread, LoopThread
+from ext.utils import dump_json, open_json
 
 
 class Programe(QApplication):
@@ -53,13 +51,26 @@ class Programe(QApplication):
         self.setStyleSheet(qss.readAll())
 
     def getScanName(self):
-        scan_name = self.GUI.scans_combobox.lineEdit().text()
+        scan_name = self.GUI.scan_selector.combobox.lineEdit().text()
         scans_names = self.downloader.get_scans_names()
         if not scan_name in scans_names: return None
         return scan_name
 
+
+    def select_scan_folder_button_clicked(self):
+        self.GUI.select_scans_folder()
     
+    def download_button_clicked(self):
+        self.GUI.download_button_clicked()
     
+    def stop_download_button_clicked(self):
+        self.GUI.stop_button_clicked()
+
+    def pause_download_button_clicked(self):
+        self.GUI.update_hide_pause_button()
+
+    def validation_button_clicked(self):
+        self.GUI.validate_scan_name()
 
 if __name__ == '__main__':
     programe = Programe()

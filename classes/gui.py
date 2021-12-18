@@ -1,9 +1,13 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
-from classes.widgets import *
-from ext.utils import open_json
+from classes.widgets.downloader_buttons import DownloaderButtons
+from classes.widgets.options_tab import OptionsTab
+from classes.widgets.right_labels import RightLabels
+from classes.widgets.scan_folder_selector import ScanFolderSelector
+from classes.widgets.scan_selector import ScanSelector
 
 
 class GUI(QMainWindow):
@@ -13,7 +17,6 @@ class GUI(QMainWindow):
 
         ### Set window ###
         self.setWindowTitle("OtakuDownloader") # set window title
-        self.setMinimumSize(QSize(1200, 800)) # set window minimum size
         self.setWindowIcon(QIcon('assets/icon.jpg')) # set window icon
         self.heightForWidth(2)
 
@@ -23,78 +26,50 @@ class GUI(QMainWindow):
         """
         Create app widgets
         """
-        self.select_folder_button = SelectFolderButton(text='Select scans folder', parent=self, name='select_folder_button')
-        self.select_folder_button.clicked.connect(self.select_scans_folder)
+        self.scans_folder_selector = ScanFolderSelector(name='folder_selector', programe=self.programe)
+        self.scan_selector = ScanSelector(name='scan_selector', programe=self.programe)
+        self.scan_selector.combobox.set_items(self.programe.downloader.get_scans_names())
+        self.options_tab = OptionsTab(name='options_tab')
+        self.downloader_buttons = DownloaderButtons(name='downloader_buttons', programe=self.programe)
+        self.right_labels = RightLabels(name='right_labels')
 
-        self.folder_label = FolderLabel(parent=self, name='folder_label')
+        self.central_widget = QWidget()
+        HLayout = QVBoxLayout()
+        HLayout.addWidget(self.scans_folder_selector)
+        HLayout.addWidget(self.scan_selector)
+        HLayout.addWidget(self.options_tab)
+        HLayout.addWidget(self.downloader_buttons)
+        
+        main_layout = QHBoxLayout()
+        main_layout.addLayout(HLayout, stretch=1)
+        main_layout.addWidget(self.right_labels, stretch=1)
+
+        self.central_widget.setLayout(main_layout)
+        self.setCentralWidget(self.central_widget)
+
         self.update_selected_folder_label()
-
-        self.scans_combobox = ScansCombobox(parent=self, name='scans_combobox')
-        self.update_scans_names_list()
-
-        self.download_button = DownloadButton(text='Download scan', parent=self, name='download_button')
-        self.download_button.clicked.connect(self.download_button_clicked)
-
-        self.validation_button = ValidationButton(text='Entry', parent=self, name='validation_button')
-        self.validation_button.clicked.connect(self.validate_scan_name)
-
-        self.check_all_checkbox = ChaptersCheckBoxSlectAll(name='check_all_checkbox', parent=self)
-        model = ChaptersCheckBoxes()
-        self.chapters_list = ChaptersView(model=model, parent=self, name='chapters_view')
-
-        self.pause_button = PauseButton(text='Pause', parent=self, name='pause_button')
-        self.pause_button.clicked.connect(self.update_hide_pause_button)
-
-        self.no_pause_button = PauseButton(text='No Pause', parent=self, name='no_pause_button')
-        self.no_pause_button.clicked.connect(self.update_hide_pause_button)
-
-        self.stop_button = StopButton(text='Stop', parent=self, name='stop_button')
-        self.stop_button.clicked.connect(self.stop_button_clicked)
-
-        self.top_right_label = TopRightLabel(parent=self, name='top_right_label')
-        self.bottom_right_label = BottomRightLabel(parent=self, name='bottom_right_label')
-
         self.update_all_buttons()
-        self.no_pause_button.setHidden(True)
-        self.update_stop_button()
 
     def update_hide_pause_button(self):
         if self.programe.download_scan_in_combobox_thread.pause:
             self.programe.download_scan_in_combobox_thread.setPause(False)
-            self.no_pause_button.setHidden(True)
-            self.pause_button.setHidden(False)
+            self.downloader_buttons.unpause_button.setHidden(True)
+            self.downloader_buttons.pause_button.setHidden(False)
         else:
             self.programe.download_scan_in_combobox_thread.setPause(True)
-            self.pause_button.setHidden(True)
-            self.no_pause_button.setHidden(False)
+            self.downloader_buttons.pause_button.setHidden(True)
+            self.downloader_buttons.unpause_button.setHidden(False)
 
-    def update_hide_stop_button(self):
-        self.stop_button.setEnabled(False)
+    def update_stop_button(self):
+        self.downloader_buttons.stop_button.setEnabled(False)
         if self.programe.download_scan_in_combobox_thread.alive:
-            self.setEnabled(True)
+            self.downloader_buttons.stop_button.setEnabled(True)
 
     def stop_button_clicked(self):
         if self.programe.download_scan_in_combobox_thread.pause: self.update_hide_pause_button()
         self.programe.download_scan_in_combobox_thread.stop()
-        self.update_hide_stop_button()
+        self.update_stop_button()
         self.update_all_buttons()
-
-    def resizeEvent(self, event):
-        self.select_folder_button.resize()
-        self.folder_label.resize()
-        self.scans_combobox.resize()
-        self.download_button.resize()
-
-        self.check_all_checkbox.resize()
-        self.chapters_list.resize()
-
-        self.validation_button.resize()
-        self.pause_button.resize()
-        self.no_pause_button.resize()
-        self.stop_button.resize()
-        
-        self.top_right_label.resize()
-        self.bottom_right_label.resize()
 
     def select_scans_folder(self):
         folder_path = QFileDialog.getExistingDirectory()
@@ -105,17 +80,17 @@ class GUI(QMainWindow):
     
     def update_selected_folder_label(self):
         folder = self.programe.config["data"]['scans-folder']
-        self.folder_label.updateText(folder)
+        self.scans_folder_selector.label.update_text(folder)
     
     def update_scans_names_list(self):
         scans_names = self.programe.downloader.get_scans_names()
-        self.scans_combobox.update_items(scans_names)
-        self.scans_combobox.setEditText(self.programe.config['data']['current-scan-name'])
+        self.scan_selector.combobox.set_items(scans_names)
+        self.scan_selector.combobox.setEditText(self.programe.config['data']['current-scan-name'])
     
     def validate_scan_name(self):
-        self.download_button.setEnabled(False)
+        self.downloader_buttons.download_button.setEnabled(False)
 
-        current_text = self.scans_combobox.currentText()
+        current_text = self.scan_selector.combobox.currentText()
         scans_names = self.programe.downloader.get_scans_names()
         if current_text in scans_names:
             scan_link = self.programe.downloader.get_scan_link(name=current_text)
@@ -127,11 +102,10 @@ class GUI(QMainWindow):
             self.programe.config['data']['current-scan-chapters'] = scan_chapters
             self.programe.update_config()
 
-            chapters_view = self.chapters_list
-            chapters_view.model.setItems(chapters_numbers=scan_chapters_numbers)
+            self.options_tab.chapters_checkboxes_view.model.set_items(chapters_numbers=scan_chapters_numbers)
 
         else:
-            self.scans_combobox.setEditText('Provid valid name please')
+            self.scan_selector.combobox.setEditText('Provid valid name please')
             self.programe.config['data']['current-scan-link'] = None
             self.programe.config['data']['current-scan-name'] = None
             self.programe.update_config()
@@ -139,34 +113,34 @@ class GUI(QMainWindow):
         self.update_download_button()
 
     def update_download_button(self):
-        self.download_button.setEnabled(False)
+        self.downloader_buttons.download_button.setEnabled(False)
         if not self.programe.download_scan_in_combobox_thread.alive:
             if self.programe.config['data']['current-scan-link'] is not None:
-                self.download_button.setEnabled(True)
+                self.downloader_buttons.download_button.setEnabled(True)
                 return
     
     def update_validation_button(self):
-        self.validation_button.setEnabled(False)
+        self.scan_selector.button.setEnabled(False)
         if not self.programe.download_scan_in_combobox_thread.alive:
-            self.validation_button.setEnabled(True)
+            self.scan_selector.button.setEnabled(True)
             return
 
     def update_select_folder_button(self):
-        self.select_folder_button.setEnabled(False)
+        self.scans_folder_selector.button.setEnabled(False)
         if not self.programe.download_scan_in_combobox_thread.alive:
-            self.select_folder_button.setEnabled(True)
+            self.scans_folder_selector.button.setEnabled(True)
             return
 
     def update_pause_button(self):
-        self.pause_button.setEnabled(False)
+        self.downloader_buttons.pause_button.setEnabled(False)
         if self.programe.download_scan_in_combobox_thread.alive:
-            self.pause_button.setEnabled(True)
+            self.downloader_buttons.pause_button.setEnabled(True)
             return
     
     def update_stop_button(self):
-        self.stop_button.setEnabled(False)
+        self.downloader_buttons.stop_button.setEnabled(False)
         if self.programe.download_scan_in_combobox_thread.alive:
-            self.stop_button.setEnabled(True)
+            self.downloader_buttons.stop_button.setEnabled(True)
             return
 
     def update_all_buttons(self):
@@ -177,18 +151,18 @@ class GUI(QMainWindow):
         self.update_stop_button()
 
     def update_scan_combobox(self):
-        self.scans_combobox.lineEdit().setEnabled(False)
+        self.scan_selector.combobox.lineEdit().setEnabled(False)
         if not self.programe.download_scan_in_combobox_thread.alive:
-            self.scans_combobox.lineEdit().setEnabled(True)
+            self.scan_selector.combobox.lineEdit().setEnabled(True)
             return
 
     def download_button_clicked(self):
-        self.download_button.setEnabled(False)
-        self.validation_button.setEnabled(False)
-        self.select_folder_button.setEnabled(False)
-        self.scans_combobox.lineEdit().setEnabled(False)
-        self.pause_button.setEnabled(True)
-        self.stop_button.setEnabled(True)
+        self.downloader_buttons.download_button.setEnabled(False)
+        self.scan_selector.button.setEnabled(False)
+        self.scans_folder_selector.button.setEnabled(False)
+        self.scan_selector.combobox.lineEdit().setEnabled(False)
+        self.downloader_buttons.pause_button.setEnabled(True)
+        self.downloader_buttons.stop_button.setEnabled(True)
 
         self.update_chapters()
         self.programe.download_scan_in_combobox_thread.start()
@@ -197,7 +171,7 @@ class GUI(QMainWindow):
         self.programe.download_scan_in_combobox_thread.finished.connect(self.update_scan_combobox)
         
     def update_chapters(self):
-        items_text = self.chapters_list.getItemsCheckedText()
+        items_text = self.options_tab.chapters_checkboxes_view.get_items_checked_text()
         main_url = self.programe.config['data']['current-scan-link']
         chapter_links = []
         for item_text in items_text:

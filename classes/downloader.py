@@ -1,9 +1,9 @@
-import bs4
-import requests
-from ext.utils import create_folder
 import json
 import os
 import time
+
+import bs4
+import requests
 
 
 class Downloader:
